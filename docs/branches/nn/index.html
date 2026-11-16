@@ -109,6 +109,8 @@ th, td { padding: 3px 5px; text-align: right; border-bottom: 1px solid var(--lin
 thead th { color: var(--muted); font-size: 10px; font-weight: 600; }
 th:first-child { text-align: left; }
 tbody th { font-weight: 500; }
+tfoot { --row-background: var(--active); background: var(--row-background); font-weight: 700; }
+tfoot th, tfoot td { border-top: 1px solid var(--accent); }
 .row-label { white-space: normal; }
 .amount-bar { background-image: linear-gradient(to right, var(--bar) var(--bar-width), transparent 0); font-weight: 700; }
 .expand { border: 0; padding: 0; background: transparent; text-align: left; font-weight: 700; }
@@ -126,6 +128,11 @@ tbody th { font-weight: 500; }
 .composition-track > button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 .composition-empty { align-self: center; padding-left: 4px; }
 
+@media screen and (min-width: 821px) and (max-height: 800px) {
+  .structure th, .structure td { padding-block: 2px; }
+  .trend-plot { min-height: max(104px, 15vh); }
+}
+
 @media screen and (max-width: 820px) {
   .page-title, main { width: calc(100% - 18px); }
   .page-title { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -139,7 +146,7 @@ tbody th { font-weight: 500; }
   .axis-label { font-size: 12px; }
   table { min-width: 570px; }
   th, td { padding-block: 4px; }
-  tr > th:first-child { position: sticky; left: 0; z-index: 1; min-width: 100px; max-width: 155px; background: var(--panel); }
+  tr > th:first-child { position: sticky; left: 0; z-index: 1; min-width: 100px; max-width: 155px; background: var(--row-background, var(--panel)); }
 }
 
 @page {
@@ -345,6 +352,10 @@ export function dashboardReport(data, { branchCode = null, start = data.latestMo
     kpis: metrics(periods),
     revenue: revenueStructure(periods, data.revenueCategories),
     expenses: expenseStructure(periods),
+    structureTotals: {
+      revenue: valuesAndComparisons(periods, (period) => sumValues(period.categories)),
+      expenses: expenseRow("Итого", periods, (period) => period.expense),
+    },
     trend: Array.from({ length: 12 }, (_, index) => {
       const month = index + 1;
       return {
@@ -519,10 +530,10 @@ function tableRow(row, title, scale, extraValues, digits, attributes = "") {
   return `<tr${attributes}><th class="row-label" scope="row">${title}</th>
     <td class="amount-bar" style="--bar-width:${scale && value !== null ? 100 * Math.abs(value) / scale : 0}%">${money(value, true)}</td>
     ${comparisonCells(row.comparisons)}
-    ${extraValues.map((figure) => `<td>${percent(figure, digits)}</td>`).join("")}</tr>`;
+    ${extraValues.map((figure) => `<td>${figure === undefined ? "" : percent(figure, digits)}</td>`).join("")}</tr>`;
 }
 
-function structureTable(rows, years, context, expense = false) {
+function structureTable(rows, total, years, context, expense = false) {
   const title = expense ? "Структура расходов" : "Структура выручки";
   const column = expense ? "Вид расхода" : "Вид выручки";
   const share = expense ? "Доля" : "% к билетам";
@@ -541,12 +552,15 @@ function structureTable(rows, years, context, expense = false) {
     return `<tbody>${tableRow(row, heading, maximum, row.shares, 1)}</tbody>
       <tbody id="expense-detail-${i}" hidden>${details}</tbody>`;
   }).join("");
+  const totalExtras = expense ? total.shares : [undefined, undefined];
+  const footer = tableRow(total, "Итого", 0, totalExtras, expense ? 1 : 2);
   return `<article class="panel structure">
     <h2>${title}, млн руб. · ${context}</h2>
     <div class="table-scroll" tabindex="0" role="region" aria-label="${title}"><table>
       <thead><tr><th scope="col">${column}</th><th scope="col">${years[0]}</th>${comparisons}
         <th scope="col">${share}<br>${years[0]}</th><th scope="col">${share}<br>${years[1]}</th>
       </tr></thead>${expense ? body || '<tbody><tr><td colspan="8">Данных нет</td></tr></tbody>' : `<tbody>${body}</tbody>`}
+      <tfoot>${footer}</tfoot>
     </table></div>
   </article>`;
 }
@@ -614,8 +628,9 @@ function render(includeTrends = false) {
   byId("period-hint").textContent = state.anchor === null ? "Выберите начало периода" : "Выберите конец периода";
   renderKpis(report);
   const title = escape(context);
-  byId("structures").innerHTML = structureTable(report.revenue, report.years, title)
-    + structureTable(report.expenses, report.years, title, true) + compositionChart(report, title);
+  const { revenue, expenses, structureTotals, years } = report;
+  byId("structures").innerHTML = structureTable(revenue, structureTotals.revenue, years, title)
+    + structureTable(expenses, structureTotals.expenses, years, title, true) + compositionChart(report, title);
   bindCompositionTooltip(byId("structures").querySelector(".composition"));
   if (includeTrends) renderTrends(report, branchName);
 }
