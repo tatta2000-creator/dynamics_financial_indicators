@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -91,6 +91,7 @@ h1 { min-width: 0; overflow-x: auto; white-space: nowrap; margin: 0; font-size: 
 .trend-plot { position: relative; }
 .trend-plot svg { display: block; width: 100%; overflow: visible; }
 .axis-label { fill: var(--muted); font-size: 10px; }
+.axis-label.negative { fill: var(--bad); }
 .series { fill: none; stroke: currentColor; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .current .series { stroke-width: 2.6; }
 .previous { color: var(--previous); }
@@ -101,6 +102,7 @@ h1 { min-width: 0; overflow-x: auto; white-space: nowrap; margin: 0; font-size: 
 .chart-hitboxes button { padding: 0; background: transparent; border: 0; }
 .chart-tooltip { position: absolute; z-index: 2; top: 3px; width: max-content; max-width: 100%; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; box-shadow: 0 3px 10px var(--shadow); font-size: 12px; line-height: 1.5; }
 .chart-tooltip span { display: block; }
+.tooltip-value { font-weight: inherit; }
 .table-scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; white-space: nowrap; font-size: 11px; }
 th, td { padding: 3px 5px; text-align: right; border-bottom: 1px solid var(--line); }
@@ -113,17 +115,22 @@ tbody th { font-weight: 500; }
 .expand::before { content: "▸"; color: var(--accent); display: inline-block; width: 12px; }
 .expand[aria-expanded="true"]::before { content: "▾"; }
 .expense-detail th { padding-left: 17px; }
-.composition { display: flex; flex-direction: column; }
+.composition { position: relative; display: flex; flex-direction: column; }
+.composition-tooltip { max-width: calc(100% - 12px); }
 .composition-legend { margin: 6px 0 8px; }
 .composition-bars { display: grid; flex: 1; grid-template-rows: repeat(3, minmax(27px, 1fr)); gap: 6px; }
 .composition-row { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 6px; font-size: 11px; color: var(--muted); }
 .composition-row > strong { align-self: center; }
 .composition-track { display: flex; align-items: stretch; background: var(--page); border-radius: 4px; overflow: hidden; }
-.composition-track > span { display: grid; place-items: center; min-width: 0; overflow: hidden; color: #fff; font-size: 10px; font-weight: 700; }
+.composition-track > button { display: grid; place-items: center; min-width: 0; overflow: hidden; border: 0; padding: 0; color: #fff; font-size: 10px; font-weight: 700; }
+.composition-track > button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
 .composition-empty { align-self: center; padding-left: 4px; }
 
 @media screen and (max-width: 820px) {
   .page-title, main { width: calc(100% - 18px); }
+  .page-title { flex-direction: column; align-items: stretch; gap: 6px; }
+  .page-title .page-actions { order: -1; align-self: flex-end; }
+  .page-title h1 { overflow: visible; white-space: normal; overflow-wrap: anywhere; }
   .filters { grid-template-columns: minmax(0, 1fr); gap: 5px; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .reports { grid-template-columns: minmax(0, 1fr); }
@@ -162,9 +169,10 @@ tbody th { font-weight: 500; }
     <h1 id="heading" aria-live="polite">Анализ финансовых показателей</h1>
     <div class="page-actions">
       <button id="print" type="button">Печать</button>
-      <button id="theme" type="button" aria-pressed="false">Тёмная тема</button>
+      <button id="theme" type="button" aria-pressed="true">Светлая тема</button>
     </div>
   </header>
+
   <main>
     <div class="filters">
       <div class="branch-control" role="group" aria-labelledby="branch-label">
@@ -183,10 +191,12 @@ tbody th { font-weight: 500; }
     </div>
     <noscript>Для работы дашборда включите JavaScript.</noscript>
   </main>
-  <script id="dashboard-data" type="application/json">{"year": 2026, "latestMonth": 10, "revenueCategories": ["Билеты оффлайн", "Билеты онлайн", "Фото", "Прочая выручка", "Кафе"], "branches": [{"name": "ИКЕЛЕ МИКЕЛЕ", "code": "ikele-mikele", "months": [{"year": 2026, "month": 7, "amounts": [["expense", "зарплата", "зарплата", 207514.0], ["expense", "прочие", "комиссии банков", 22241.0], ["expense", "прочие расходы на персонал", "поиск персонала", 11100.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 79850.0], ["expense", "расходы на ТМЦ", "материалы", 159129.0], ["expense", "расходы на ТМЦ", "мбп", 101975.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1919506.0], ["expense", "реклама", "оффлайн прочая", 12651.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 16173.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 44490.0], ["revenue", "Кафе", "", 1011916.0]]}, {"year": 2026, "month": 8, "amounts": [["expense", "зарплата", "зарплата", 1387823.0], ["expense", "зарплата", "налоги с ФОТ", 180205.0], ["expense", "прочие", "комиссии банков", 33711.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 128825.0], ["expense", "прочие расходы на персонал", "поиск персонала", 130988.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 18188.0], ["expense", "прочие расходы на персонал", "транспортные расходы", 3550.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 2620.0], ["expense", "расходы на ТМЦ", "материалы", 101165.0], ["expense", "расходы на ТМЦ", "мбп", 105152.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1329561.0], ["expense", "реклама", "онлайн", 1270.0], ["expense", "реклама", "оффлайн прочая", 13545.0], ["expense", "реклама", "промо прочие расходы", 1316.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 145800.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 4620.0], ["expense", "эксплуатационные расходы", "охрана помещений", 4990.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 97250.0], ["expense", "эксплуатационные расходы", "связь и интернет", 8400.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 8000.0], ["revenue", "Кафе", "", 1938833.0]]}, {"year": 2026, "month": 9, "amounts": [["expense", "зарплата", "зарплата", 1556763.0], ["expense", "прочие", "комиссии банков", 38208.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 186375.0], ["expense", "прочие расходы на персонал", "командировки", 25875.0], ["expense", "прочие расходы на персонал", "мобильная связь", 1000.0], ["expense", "прочие расходы на персонал", "поиск персонала", 66005.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 11900.0], ["expense", "прочие расходы на персонал", "транспортные расходы", 4096.0], ["expense", "расходы на ТМЦ", "материалы", 71435.0], ["expense", "расходы на ТМЦ", "мбп", 39250.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1001316.0], ["expense", "реклама", "оффлайн прочая", 7120.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 198828.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 4620.0], ["expense", "эксплуатационные расходы", "охрана помещений", 2495.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 160111.0], ["expense", "эксплуатационные расходы", "связь и интернет", 14750.0], ["returns", "", "", -4990.0], ["revenue", "Кафе", "", 1940273.0]]}, {"year": 2026, "month": 10, "amounts": [["expense", "зарплата", "зарплата", 1327478.0], ["expense", "зарплата", "налоги с ФОТ", 190611.0], ["expense", "прочие", "комиссии банков", 43982.0], ["expense", "прочие", "недостачи (касса)", 896.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 324855.0], ["expense", "прочие расходы на персонал", "поиск персонала", 135918.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 6400.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 12973.0], ["expense", "расходы на ТМЦ", "материалы", 87015.0], ["expense", "расходы на ТМЦ", "мбп", -108900.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1009964.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 265556.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 9620.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 229181.0], ["expense", "эксплуатационные расходы", "связь и интернет", 8400.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 27300.0], ["returns", "", "", -5118.0], ["revenue", "Кафе", "", 3445216.0]]}]}], "branchCode": "ikele-mikele"}</script>
+  <script id="dashboard-data" type="application/json">{"year": 2026, "latestMonth": 10, "revenueCategories": ["Билеты оффлайн", "Билеты онлайн", "Фото", "Прочая выручка", "Кафе"], "branches": [{"name": "ИКЕЛЕ МИКЕЛЕ", "code": "ikele-mikele", "months": [{"year": 2026, "month": 7, "amounts": [["expense", "зарплата", "зарплата", 207514.0], ["expense", "прочие", "комиссии банков", 22241.0], ["expense", "прочие расходы на персонал", "поиск персонала", 11100.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 79850.0], ["expense", "расходы на ТМЦ", "материалы", 159129.0], ["expense", "расходы на ТМЦ", "мбп", 101975.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1919506.0], ["expense", "реклама", "оффлайн прочая", 12651.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 16173.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 44490.0], ["revenue", "Кафе", "", 1011916.0]]}, {"year": 2026, "month": 8, "amounts": [["expense", "зарплата", "зарплата", 1387823.0], ["expense", "зарплата", "налоги с ФОТ", 180205.0], ["expense", "прочие", "комиссии банков", 33711.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 128825.0], ["expense", "прочие расходы на персонал", "поиск персонала", 130988.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 18188.0], ["expense", "прочие расходы на персонал", "транспортные расходы", 3550.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 2620.0], ["expense", "расходы на ТМЦ", "материалы", 101165.0], ["expense", "расходы на ТМЦ", "мбп", 105152.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1329561.0], ["expense", "реклама", "онлайн", 1270.0], ["expense", "реклама", "оффлайн прочая", 13545.0], ["expense", "реклама", "промо прочие расходы", 1316.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 145800.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 4620.0], ["expense", "эксплуатационные расходы", "охрана помещений", 4990.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 97250.0], ["expense", "эксплуатационные расходы", "связь и интернет", 8400.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 8000.0], ["revenue", "Кафе", "", 1938833.0]]}, {"year": 2026, "month": 9, "amounts": [["expense", "зарплата", "зарплата", 1556763.0], ["expense", "прочие", "комиссии банков", 38208.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 186375.0], ["expense", "прочие расходы на персонал", "командировки", 25875.0], ["expense", "прочие расходы на персонал", "мобильная связь", 1000.0], ["expense", "прочие расходы на персонал", "поиск персонала", 66005.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 11900.0], ["expense", "прочие расходы на персонал", "транспортные расходы", 4096.0], ["expense", "расходы на ТМЦ", "материалы", 71435.0], ["expense", "расходы на ТМЦ", "мбп", 39250.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1001316.0], ["expense", "реклама", "оффлайн прочая", 7120.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 198828.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 4620.0], ["expense", "эксплуатационные расходы", "охрана помещений", 2495.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 160111.0], ["expense", "эксплуатационные расходы", "связь и интернет", 14750.0], ["otherIncome", "", "", 388.0], ["returns", "", "", -4990.0], ["revenue", "Кафе", "", 1940273.0]]}, {"year": 2026, "month": 10, "amounts": [["expense", "зарплата", "зарплата", 1327478.0], ["expense", "зарплата", "налоги с ФОТ", 190611.0], ["expense", "прочие", "комиссии банков", 43982.0], ["expense", "прочие", "недостачи (касса)", 896.0], ["expense", "прочие", "юридические, консультационные и информ. Услуги", 324855.0], ["expense", "прочие расходы на персонал", "поиск персонала", 135918.0], ["expense", "прочие расходы на персонал", "прочие расходы на персонал", 6400.0], ["expense", "расходы на ТМЦ", "доставка ТМЦ", 12973.0], ["expense", "расходы на ТМЦ", "материалы", 87015.0], ["expense", "расходы на ТМЦ", "мбп", -108900.0], ["expense", "расходы на ТМЦ", "продукты и расходники для кафе", 1009964.0], ["expense", "эксплуатационные расходы", "аренда и коммунальные платежи", 265556.0], ["expense", "эксплуатационные расходы", "клининговые услуги", 9620.0], ["expense", "эксплуатационные расходы", "ремонт и обслуживание оборудования", 229181.0], ["expense", "эксплуатационные расходы", "связь и интернет", 8400.0], ["expense", "эксплуатационные расходы", "текущий ремонт помещений", 27300.0], ["otherIncome", "", "", 18516.0], ["returns", "", "", -5118.0], ["revenue", "Кафе", "", 3445216.0]]}]}], "branchCode": "ikele-mikele"}</script>
+
   <script type="module">const EMPTY_PERIOD = {
   available: false,
   revenue: 0,
+  otherIncome: 0,
   returns: 0,
   expense: 0,
   taxes: 0,
@@ -219,6 +229,9 @@ function summarize(months) {
         case "returns":
           result.returns += amount;
           break;
+        case "otherIncome":
+          result.otherIncome += amount;
+          break;
         case "taxes":
           result.taxes += amount;
           break;
@@ -226,7 +239,7 @@ function summarize(months) {
     }
   }
   result.revenue = sumValues(result.categories) + result.returns;
-  result.beforeTax = result.revenue - result.expense;
+  result.beforeTax = result.revenue + result.otherIncome - result.expense;
   result.afterTax = result.beforeTax + result.taxes;
   return result;
 }
@@ -344,7 +357,7 @@ export function dashboardReport(data, { branchCode = null, start = data.latestMo
   };
 }
 
-const data = JSON.parse(document.getElementById("dashboard-data").textContent);
+let data = JSON.parse(document.getElementById("dashboard-data").textContent);
 const MONTHS = "Янв Фев Мар Апр Май Июн Июл Авг Сен Окт Ноя Дек".split(" ");
 const METRIC_LABELS = {
   revenue: "Выручка",
@@ -421,13 +434,17 @@ function plotScale(values) {
   ) };
 }
 
+function lossClass(metric, value) {
+  return metric === "beforeTax" && value < 0 ? "negative" : "";
+}
+
 function trendChart(report, metric, branchName) {
   const values = report.trend.map((item) => item.metrics[metric].values);
   const { min, max, ticks } = plotScale(values.flat().filter((value) => value !== null));
   const x = (index) => 57 + index * (550 / 11);
   const y = (value) => 102 - (value - min) * 94 / (max - min);
   const valueLabels = ticks.map((value) =>
-    `<text class="axis-label" x="51" y="${y(value) + 3}" text-anchor="end">${money(value, true)}</text>`);
+    `<text class="axis-label ${lossClass(metric, value)}" x="51" y="${y(value) + 3}" text-anchor="end">${money(value, true)}</text>`);
   const monthLabels = MONTHS.map((month, index) =>
     `<text class="axis-label" x="${x(index)}" y="117" text-anchor="middle">${month}</text>`);
   const series = [2, 1, 0].map((yearIndex) => {
@@ -469,9 +486,10 @@ function renderTrends(report, branchName) {
     const buttons = plot.querySelectorAll("button");
     const show = (button) => {
       const index = Number(button.dataset.month);
-      const { values, comparisons } = report.trend[index].metrics[chart.dataset.metric];
+      const { metric } = chart.dataset;
+      const { values, comparisons } = report.trend[index].metrics[metric];
       const readings = [2, 1, 0].map((i) => `<span><i class="legend-mark ${SERIES[i]}"></i>
-        ${report.years[i]} · ${money(values[i])}${values[i] === null ? "" : " руб."}</span>`);
+        ${report.years[i]} · <b class="tooltip-value ${lossClass(metric, values[i])}">${money(values[i])}${values[i] === null ? "" : " руб."}</b></span>`);
       const deltas = comparisons.map(({ growth, direction }, i) => growth === null ? "" :
         `<span class="${movement(direction)}">${shortYear(report.years[0])}/${shortYear(report.years[i + 1])} · ${percent(growth, 1, true)}</span>`);
       tooltip.innerHTML = `<strong>${MONTHS[index]}</strong>${readings.join("")}${deltas.join("")}`;
@@ -539,17 +557,44 @@ function compositionChart(report, context) {
   }));
   const legend = rows.map(({ name, color }) => `<span><i class="legend-mark" style="color:${color}"></i>${escape(name)}</span>`);
   const bars = report.years.map((year, i) => {
-    const segments = rows.filter(({ shares }) => shares[i] > 0).map(({ name, color, shares }) => {
+    const segments = rows.filter(({ shares }) => shares[i] > 0).map(({ name, color, shares, values }) => {
       const share = shares[i];
-      return `<span style="width:${share * 100}%;background:${color}" title="${escape(name)} · ${percent(share, 2)}"
-        aria-label="${escape(name)} · ${percent(share, 2)}">${share >= .06 ? percent(share, 0) : ""}</span>`;
+      const caption = `${year} · ${name} · ${percent(share, 2)} · ${money(values[i])} руб.`;
+      return `<button type="button" style="width:${share * 100}%;background:${color}"
+        aria-label="${escape(caption)}">${share >= .06 ? percent(share, 0) : ""}</button>`;
     });
     return `<div class="composition-row"><strong>${year}</strong><div class="composition-track">${segments.join("") ||
       '<small class="composition-empty">Данных нет</small>'}</div></div>`;
   });
   return `<article class="panel composition"><h2>Изменение структуры выручки · ${context}</h2>
     <div class="composition-legend">${legend.join("")}</div>
-    <div class="composition-bars">${bars.join("")}</div></article>`;
+    <div class="composition-bars">${bars.join("")}</div>
+    <div class="chart-tooltip composition-tooltip" role="tooltip" hidden></div></article>`;
+}
+
+function bindCompositionTooltip(chart) {
+  const bars = chart.querySelector(".composition-bars");
+  const tooltip = chart.querySelector(".composition-tooltip");
+  const hide = () => { tooltip.hidden = true; };
+  const show = (event) => {
+    const button = event.target.closest("button");
+    if (!button) {
+      hide();
+      return;
+    }
+    tooltip.textContent = button.getAttribute("aria-label");
+    tooltip.hidden = false;
+    const anchor = button.getBoundingClientRect();
+    const card = chart.getBoundingClientRect();
+    tooltip.style.left = `${Math.max(6, Math.min(anchor.left - card.left, chart.clientWidth - tooltip.offsetWidth - 6))}px`;
+    tooltip.style.top = `${Math.max(4, anchor.top - card.top - tooltip.offsetHeight - 6)}px`;
+  };
+  bars.addEventListener("pointerover", (event) => { if (event.pointerType === "mouse") show(event); });
+  bars.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") hide(); });
+  bars.addEventListener("click", show);
+  bars.addEventListener("focusin", show);
+  bars.addEventListener("focusout", (event) => { if (!bars.contains(event.relatedTarget)) hide(); });
+  bars.addEventListener("keydown", (event) => { if (event.key === "Escape") hide(); });
 }
 
 function render(includeTrends = false) {
@@ -571,16 +616,21 @@ function render(includeTrends = false) {
   const title = escape(context);
   byId("structures").innerHTML = structureTable(report.revenue, report.years, title)
     + structureTable(report.expenses, report.years, title, true) + compositionChart(report, title);
+  bindCompositionTooltip(byId("structures").querySelector(".composition"));
   if (includeTrends) renderTrends(report, branchName);
 }
 
 const branchControl = byId("branches");
+function renderBranchButtons() {
+  branchControl.innerHTML = [{ code: "", name: "Все" }, ...data.branches]
+    .map(({ code, name }) => `<button type="button" data-branch="${escape(code)}">${escape(name)}</button>`).join("");
+}
+
 if (data.branchCode) {
   branchControl.closest(".branch-control").hidden = true;
   branchControl.closest(".filters").classList.add("scoped");
 } else {
-  branchControl.innerHTML = [{ code: "", name: "Все" }, ...data.branches]
-    .map(({ code, name }) => `<button type="button" data-branch="${escape(code)}">${escape(name)}</button>`).join("");
+  renderBranchButtons();
   branchControl.addEventListener("click", (event) => {
     const button = event.target.closest("[data-branch]");
     if (!button) return;
@@ -610,6 +660,10 @@ byId("structures").addEventListener("click", (event) => {
   button.setAttribute("aria-expanded", !expanded);
   byId(button.getAttribute("aria-controls")).hidden = expanded;
 });
+document.addEventListener("pointerdown", (event) => {
+  if (event.target.closest(".composition-track button")) return;
+  byId("structures").querySelector(".composition-tooltip").hidden = true;
+});
 
 function applyTheme(dark) {
   document.documentElement.dataset.theme = dark ? "dark" : "light";
@@ -619,9 +673,9 @@ function applyTheme(dark) {
 
 const themeKey = "dynamics-financial-indicators-theme";
 try {
-  applyTheme(localStorage.getItem(themeKey) === "dark");
+  applyTheme(localStorage.getItem(themeKey) !== "light");
 } catch {
-  applyTheme(false);
+  applyTheme(true);
 }
 byId("theme").addEventListener("click", () => {
   const dark = document.documentElement.dataset.theme !== "dark";
